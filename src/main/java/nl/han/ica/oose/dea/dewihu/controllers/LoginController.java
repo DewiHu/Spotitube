@@ -10,9 +10,9 @@ public class LoginController {
         return "Hello world!";
     }
 
-    @Path("login")
+/*    @Path("login")
     @POST
     @Produces("application/json")
     public Response loginFormaat(@QueryParam("user") String user, @QueryParam("password") String password) {
-    }
+    }*/
 }
