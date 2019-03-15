@@ -3,4 +3,5 @@ jdk:
   - openjdk11
 
 after_success:
-  jacoco:report coveralls:report
+  mvn jacoco:report
+  mvn overalls:report
