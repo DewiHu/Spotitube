@@ -21,6 +21,13 @@
     </dependencies>
     <build>
         <finalName>spotitube</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.3</version>
+            </plugin>
+        </plugins>
     </build>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
