@@ -1,6 +1,8 @@
 package nl.han.ica.oose.dea.dewihu.controllers;
 
 import nl.han.ica.oose.dea.dewihu.datasources.*;
+import nl.han.ica.oose.dea.dewihu.controllers.dto.*;
+import nl.han.ica.oose.dea.dewihu.models.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -18,7 +20,7 @@ public class LoginController {
     @Produces("application/json")
     public Response login(LoginRequestDto request) {
 
-        UserModel login = loginDAO.login(request.getUser(), request.getPassword());
+        AccountModel login = loginDAO.login(request.getUser(), request.getPassword());
 
         if (login.getToken() == null) {
             return Response.status(403).build();
@@ -26,7 +28,7 @@ public class LoginController {
 
         LoginResponseDto response = new LoginResponseDto();
         response.setToken(login.getToken());
-        response.setUser(login.getFullName());
+        response.setUser(login.getName());
 
         return Response.ok().entity(response).build();
     }
