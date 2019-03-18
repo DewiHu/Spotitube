@@ -1,11 +1,8 @@
 package nl.han.ica.oose.dea.dewihu.controllers.dto;
 
-import javax.ws.rs.Path;
-
-@Path("login")
 public class LoginRequestDto {
-    String user;
-    String password;
+    private String user;
+    private String password;
 
     public String getUser() {
         return user;
