@@ -1,5 +1,6 @@
 package nl.han.ica.oose.dea.dewihu.controllers;
 
+import nl.han.ica.oose.dea.dewihu.controllers.dto.PlaylistRequestDto;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.PlaylistResponseDto;
 import nl.han.ica.oose.dea.dewihu.datasources.PlaylistDAO;
 import nl.han.ica.oose.dea.dewihu.models.PlaylistModel;
@@ -12,7 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 
-@Path("playlists")
+@Path("/playlists")
 public class PlaylistController {
     private PlaylistDAO playlistDAO;
 
@@ -20,9 +21,10 @@ public class PlaylistController {
     @Produces ("application/json")
     public Response playlists(@QueryParam("token") String token) {
 
-        ArrayList<PlaylistModel> playlists = playlistDAO.playlists(token);
+        PlaylistRequestDto request = new PlaylistRequestDto(token);
+        ArrayList<PlaylistModel> playlists = playlistDAO.playlists(request.getToken());
 
-        if (playlists.get(0) == null) {
+        if (playlists.isEmpty()) {
             return Response.status(403).build();
         }
 
