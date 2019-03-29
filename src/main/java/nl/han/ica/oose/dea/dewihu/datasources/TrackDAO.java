@@ -1,51 +1,64 @@
 package nl.han.ica.oose.dea.dewihu.datasources;
 
+import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseProperties;
 import nl.han.ica.oose.dea.dewihu.models.TrackModel;
 
+import javax.inject.Inject;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TrackDAO {
-    public ArrayList<TrackModel> tracks(int id, String token) {
-        var tracks = new ArrayList<TrackModel>();
+    private Logger logger = Logger.getLogger(getClass().getName());
+    private DatabaseProperties databaseProperties;
 
-        tracks.add(new TrackModel());
-        tracks.get(0).setId(1);
-        tracks.get(0).setTitle("test titel");
-        tracks.get(0).setPerformer("test performer");
-        tracks.get(0).setDuration(123);
-        tracks.get(0).setAlbum("test album");
-        tracks.get(0).setPlaycount(0);
-        tracks.get(0).setPublicationDate("01-01-2000");
-        tracks.get(0).setDescription("test description");
-        tracks.get(0).setOfflineAvailable(false);
+    @Inject
+    public TrackDAO (DatabaseProperties databaseProperties) {
+        this.databaseProperties = databaseProperties;
+        tryLoadJdbcDriver(databaseProperties);
+    }
+
+    public ArrayList<TrackModel> tracks(int id) {
+        String sql = "SELECT * FROM TRACK_IN_PLAYLIST TP INNER JOIN TRACK T ON TP.TRACK_ID = T.ID WHERE PLAYLIST_ID = " + id;
+
+        ArrayList<TrackModel> tracks = new ArrayList<>();
+
+        try {
+            Connection conn = DriverManager.getConnection(databaseProperties.connectionString(), databaseProperties.connectionUser(), databaseProperties.connectionPassword());
+            PreparedStatement st = conn.prepareStatement(sql);
+            setTracks(tracks, st);
+            st.close();
+            conn.close();
+        } catch (SQLException  e) {
+            logger.log(Level.SEVERE, "Error communicating with database " + databaseProperties.connectionString(), e);
+        }
 
         return tracks;
     }
 
-    public ArrayList<TrackModel> tracks() {
-        var tracks = new ArrayList<TrackModel>();
+    private void setTracks(ArrayList<TrackModel> tracks, PreparedStatement statement) throws SQLException{
+        ResultSet rS = statement.executeQuery();
+        while(rS.next()) {
+            TrackModel track = new TrackModel();
+            track.setId(rS.getInt("ID"));
+            track.setTitle(rS.getString("TITLE"));
+            track.setPerformer(rS.getString("PERFORMER"));
+            track.setDuration(rS.getInt("DURATION"));
+            track.setAlbum(rS.getString("ALBUM"));
+            track.setPlaycount(rS.getInt("PLAYCOUNT"));
+            track.setPublicationDate(rS.getString("PUBLICATIONDATE"));
+            track.setDescription(rS.getString("DESCRIPTION"));
+            track.setOfflineAvailable(rS.getBoolean("OFFLINEAVAILABLE"));
+            tracks.add(track);
+        }
+    }
 
-        tracks.add(new TrackModel());
-        tracks.get(0).setId(1);
-        tracks.get(0).setTitle("test titel");
-        tracks.get(0).setPerformer("test performer");
-        tracks.get(0).setDuration(123);
-        tracks.get(0).setAlbum("test album");
-        tracks.get(0).setPlaycount(0);
-        tracks.get(0).setPublicationDate("01-01-2000");
-        tracks.get(0).setDescription("test description");
-        tracks.get(0).setOfflineAvailable(false);
-
-        tracks.get(0).setId(2);
-        tracks.get(0).setTitle("test titel");
-        tracks.get(0).setPerformer("test performer");
-        tracks.get(0).setDuration(123);
-        tracks.get(0).setAlbum("test album");
-        tracks.get(0).setPlaycount(0);
-        tracks.get(0).setPublicationDate("01-01-2000");
-        tracks.get(0).setDescription("test description");
-        tracks.get(0).setOfflineAvailable(false);
-
-        return tracks;
+    private void tryLoadJdbcDriver(DatabaseProperties databaseProperties) {
+        try{
+            Class.forName(databaseProperties.driver());
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "Can't load JDBC Driver " + databaseProperties.driver(), e);
+        }
     }
 }

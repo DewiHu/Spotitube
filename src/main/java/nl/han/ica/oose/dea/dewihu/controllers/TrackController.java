@@ -3,10 +3,12 @@ package nl.han.ica.oose.dea.dewihu.controllers;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.TrackRequestDto;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.TrackResponseDto;
 import nl.han.ica.oose.dea.dewihu.datasources.TrackDAO;
+import nl.han.ica.oose.dea.dewihu.models.TrackModel;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 
 @Path("/")
 public class TrackController {
@@ -20,7 +22,7 @@ public class TrackController {
         TrackRequestDto request = new TrackRequestDto();
         request.setId(id);
         request.setToken(token);
-        var tracks = trackDAO.tracks(request.getId(), request.getToken());
+        ArrayList<TrackModel> tracks = trackDAO.tracks(request.getId());
 
         if (tracks.isEmpty()) {
             return Response.status(403).build();
@@ -37,7 +39,7 @@ public class TrackController {
     @Produces("application/json")
     public Response tracks() {
 
-        var tracks = trackDAO.tracks();
+        var tracks = trackDAO.tracks(1);
 
         if (tracks.isEmpty()) {
             return Response.status(403).build();

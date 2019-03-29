@@ -13,11 +13,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 
-@Path("/playlists")
+@Path("/")
 public class PlaylistController {
     private PlaylistDAO playlistDAO;
 
     @GET
+    @Path("playlists")
     @Produces ("application/json")
     public Response playlists(@QueryParam("token") String token) {
 
@@ -26,6 +27,10 @@ public class PlaylistController {
 
         if (playlists.isEmpty()) {
             return Response.status(403).build();
+        }
+
+        for (PlaylistModel p : playlists) {
+            //p.setTracks(TrackDAO.tracks(p.getId()));
         }
 
         PlaylistResponseDto response = new PlaylistResponseDto();

@@ -1,32 +1,57 @@
 package nl.han.ica.oose.dea.dewihu.datasources;
 
+import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseProperties;
 import nl.han.ica.oose.dea.dewihu.models.PlaylistModel;
 
+import javax.inject.Inject;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class PlaylistDAO {
+public class PlaylistDAO{
+    private Logger logger = Logger.getLogger(getClass().getName());
+    private DatabaseProperties databaseProperties;
 
+    @Inject
+    public PlaylistDAO(DatabaseProperties databaseProperties) {
+        this.databaseProperties = databaseProperties;
+        tryLoadJdbcDriver(databaseProperties);
+    }
     public ArrayList<PlaylistModel> playlists(String token) {
+        String sqlPlaylist = "SELECT * FROM PLAYLIST";
 
-        var playlists = new ArrayList<PlaylistModel>();
-        var tracks = new TrackDAO();
+        ArrayList<PlaylistModel> playlists = new ArrayList<>();
 
-        playlists.add(new PlaylistModel());
-        playlists.get(0).setId(1);
-        playlists.get(0).setName("Heavy Metal");
-        playlists.get(0).setOwner(false);
-        playlists.get(0).setTracks(tracks.tracks(playlists.get(0).getId(), token));
-
-        playlists.add(new PlaylistModel());
-        playlists.get(1).setId(2);
-        playlists.get(1).setName("Pop");
-        playlists.get(1).setOwner(false);
-        playlists.get(1).setTracks(tracks.tracks(playlists.get(1).getId(), token));
-
-        if("dfkmfsd-qeeqw-8234nk".equals(token)) {
-            playlists.get(0).setOwner(true);
+        try {
+            Connection connection = DriverManager.getConnection(databaseProperties.connectionString(), databaseProperties.connectionUser(), databaseProperties.connectionPassword());
+            PreparedStatement statement = connection.prepareStatement(sqlPlaylist);
+            setPlaylists(token, playlists, statement);
+            statement.close();
+            connection.close();
+        }catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error communicating with database " + databaseProperties.connectionString(), e);
         }
-
         return playlists;
+    }
+
+    private void setPlaylists(String token, ArrayList<PlaylistModel> playlists, PreparedStatement statement) throws SQLException {
+        ResultSet resultSet = statement.executeQuery();
+        while(resultSet.next()) {
+            PlaylistModel playlist = new PlaylistModel();
+            playlist.setId(resultSet.getInt("ID"));
+            playlist.setName(resultSet.getString("NAME"));
+            playlist.setOwner(token.equals(resultSet.getString("TOKEN")));
+            playlist.setTracks(new ArrayList<>());
+            playlists.add(playlist);
+        }
+    }
+
+    private void tryLoadJdbcDriver(DatabaseProperties databaseProperties) {
+        try{
+            Class.forName(databaseProperties.driver());
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "Can't load JDBC Driver " + databaseProperties.driver(), e);
+        }
     }
 }

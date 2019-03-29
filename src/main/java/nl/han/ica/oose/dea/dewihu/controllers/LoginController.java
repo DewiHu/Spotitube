@@ -3,10 +3,14 @@ package nl.han.ica.oose.dea.dewihu.controllers;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.LoginRequestDto;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.LoginResponseDto;
 import nl.han.ica.oose.dea.dewihu.datasources.LoginDAO;
+import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseProperties;
 import nl.han.ica.oose.dea.dewihu.models.AccountModel;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 @Path("/login")
@@ -17,6 +21,8 @@ public class LoginController {
     @Consumes("application/json")
     @Produces("application/json")
     public Response login(LoginRequestDto request) {
+
+        loginDAO = new LoginDAO(new DatabaseProperties());
 
         AccountModel login = loginDAO.login(request.getUser(), request.getPassword());
 
