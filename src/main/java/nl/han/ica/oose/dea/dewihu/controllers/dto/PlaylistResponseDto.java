@@ -8,19 +8,19 @@ public class PlaylistResponseDto {
     private ArrayList<PlaylistModel> playlists;
     private int length;
 
-    public ArrayList<PlaylistModel> getPlaylists() {
-        return playlists;
-    }
-
-    public void setPlaylists(ArrayList<PlaylistModel> playlists) {
-        this.playlists = playlists;
-    }
-
     public int getLength() {
         return length;
     }
 
     public void setLength(int length) {
         this.length = length;
+    }
+
+    public ArrayList<PlaylistModel> getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(ArrayList<PlaylistModel> playlists) {
+        this.playlists = playlists;
     }
 }

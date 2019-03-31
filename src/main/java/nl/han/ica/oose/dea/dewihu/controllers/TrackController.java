@@ -14,18 +14,14 @@ import java.util.ArrayList;
 public class TrackController {
     private TrackDAO trackDAO;
 
+    @Path("tracks")
     @GET
-    @Path("playlists/{id}/tracks")
     @Produces("application/json")
-    public Response tracks(@PathParam ("id") int id, @QueryParam("token") String token) {
-
-        TrackRequestDto request = new TrackRequestDto();
-        request.setId(id);
-        request.setToken(token);
-        ArrayList<TrackModel> tracks = trackDAO.tracks(request.getId());
+    public Response tracks(@QueryParam("forPlaylist") int forPlaylist, @QueryParam("Token") String token) {
+        ArrayList<TrackModel> tracks = trackDAO.availableTracks(forPlaylist);
 
         if (tracks.isEmpty()) {
-            return Response.status(403).build();
+            return Response.status(400).build();
         }
 
         TrackResponseDto response = new TrackResponseDto();
@@ -34,21 +30,39 @@ public class TrackController {
         return Response.ok().entity(response).build();
     }
 
-    @Path("tracks")
     @GET
+    @Path("playlists/{pId}/tracks")
     @Produces("application/json")
-    public Response tracks() {
+    public Response tracksOfPlaylist(@PathParam ("pId") int pId, @QueryParam("token") String token) {
+        ArrayList<TrackModel> tracks = trackDAO.tracks(pId);
 
-        var tracks = trackDAO.tracks(1);
-
-        if (tracks.isEmpty()) {
-            return Response.status(403).build();
-        }
+ /*       if (tracks.isEmpty()) {
+            return Response.status(400).build();
+        }*/
 
         TrackResponseDto response = new TrackResponseDto();
         response.setTracks(tracks);
 
         return Response.ok().entity(response).build();
+    }
+
+    @DELETE
+    @Path("playlists/{pId}/tracks/{tId}")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response delTrack (@PathParam("pId") int pId, @PathParam("tId") int tId, @QueryParam("token") String token) {
+        trackDAO.dTrack(pId, tId);
+        return tracksOfPlaylist(pId, token);
+    }
+
+    @POST
+    @Path("playlists/{pId}/tracks")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response postTrack (@PathParam("pId") int pId, @QueryParam("token") String token, TrackRequestDto request) {
+        trackDAO.cTrack(pId, request.getId(), request.isOfflineAvailable());
+
+        return tracksOfPlaylist(pId, token);
     }
 
     @Inject

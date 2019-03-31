@@ -7,7 +7,6 @@ public class PlaylistModel {
     private String name;
     private boolean owner;
     private ArrayList<TrackModel> tracks;
-
     public int getId() {
         return id;
     }

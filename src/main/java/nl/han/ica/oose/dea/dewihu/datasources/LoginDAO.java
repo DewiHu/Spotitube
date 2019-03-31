@@ -1,56 +1,44 @@
 package nl.han.ica.oose.dea.dewihu.datasources;
 
+import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseConnection;
 import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseProperties;
 import nl.han.ica.oose.dea.dewihu.models.AccountModel;
 
 import javax.inject.Inject;
 import java.sql.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class LoginDAO{
-
-    private Logger logger = Logger.getLogger(getClass().getName());
-    private DatabaseProperties databaseProperties;
+public class LoginDAO extends DatabaseConnection {
 
     @Inject
     public LoginDAO(DatabaseProperties databaseProperties) {
-        this.databaseProperties = databaseProperties;
-        tryLoadJdbcDriver(databaseProperties);
+        super(databaseProperties);
     }
 
-    public AccountModel login(String user, String password) {
-        String sql = "SELECT FULLNAME, TOKEN FROM ACCOUNT WHERE USERNAME LIKE '" + user + "' AND PASSWORD LIKE '" + password + "'";
+    public AccountModel login(String user, String pw) {
+        String sql = "SELECT FULLNAME, TOKEN FROM ACCOUNT WHERE USERNAME LIKE '" + user + "' AND PASSWORD LIKE '" + pw + "'";
 
-        var account = new AccountModel();
+        var acc = new AccountModel();
 
         try {
-            Connection connection = DriverManager.getConnection(databaseProperties.connectionString(), databaseProperties.connectionUser(), databaseProperties.connectionPassword());
-            PreparedStatement statement = connection.prepareStatement(sql);
-            setAccountLogin(account, statement);
-            statement.close();
-            connection.close();
+            Connection conn = DriverManager.getConnection(getDatabaseProperties().connectionString(),
+                    getDatabaseProperties().connectionUser(), getDatabaseProperties().connectionPassword());
+            PreparedStatement st = conn.prepareStatement(sql);
+            setAccountLogin(acc, st);
+            st.close();
+            conn.close();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error communicating with database " + databaseProperties.connectionString(), e);
+            getLogger().log(Level.SEVERE, "Error communicating with database " + getDatabaseProperties().connectionString(), e);
         }
 
-        return account;
+        return acc;
     }
 
-    private void setAccountLogin(AccountModel account, PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = statement.executeQuery();
-        while(resultSet.next()) {
-            account.setName(resultSet.getString("FULLNAME"));
-            account.setToken(resultSet.getString("TOKEN"));
+    private void setAccountLogin(AccountModel acc, PreparedStatement st) throws SQLException {
+        ResultSet rS = st.executeQuery();
+        while(rS.next()) {
+            acc.setName(rS.getString("FULLNAME"));
+            acc.setToken(rS.getString("TOKEN"));
         }
     }
-
-    private void tryLoadJdbcDriver(DatabaseProperties databaseProperties) {
-        try{
-            Class.forName(databaseProperties.driver());
-        } catch (ClassNotFoundException e) {
-            logger.log(Level.SEVERE, "Can't load JDBC Driver " + databaseProperties.driver(), e);
-        }
-    }
-
 }

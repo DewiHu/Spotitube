@@ -1,5 +1,6 @@
 package nl.han.ica.oose.dea.dewihu.datasources;
 
+import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseConnection;
 import nl.han.ica.oose.dea.dewihu.datasources.util.DatabaseProperties;
 import nl.han.ica.oose.dea.dewihu.models.PlaylistModel;
 
@@ -7,51 +8,62 @@ import javax.inject.Inject;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class PlaylistDAO{
-    private Logger logger = Logger.getLogger(getClass().getName());
-    private DatabaseProperties databaseProperties;
+public class PlaylistDAO extends DatabaseConnection {
 
     @Inject
     public PlaylistDAO(DatabaseProperties databaseProperties) {
-        this.databaseProperties = databaseProperties;
-        tryLoadJdbcDriver(databaseProperties);
+        super(databaseProperties);
     }
-    public ArrayList<PlaylistModel> playlists(String token) {
-        String sqlPlaylist = "SELECT * FROM PLAYLIST";
+
+    //READ ALL
+    public ArrayList<PlaylistModel> rAllPlaylists(String token) {
+        String sql = "SELECT * FROM PLAYLIST";
 
         ArrayList<PlaylistModel> playlists = new ArrayList<>();
 
         try {
-            Connection connection = DriverManager.getConnection(databaseProperties.connectionString(), databaseProperties.connectionUser(), databaseProperties.connectionPassword());
-            PreparedStatement statement = connection.prepareStatement(sqlPlaylist);
-            setPlaylists(token, playlists, statement);
-            statement.close();
-            connection.close();
-        }catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error communicating with database " + databaseProperties.connectionString(), e);
+            Connection conn = DriverManager.getConnection(getDatabaseProperties().connectionString(),
+                    getDatabaseProperties().connectionUser(), getDatabaseProperties().connectionPassword());
+            PreparedStatement st = conn.prepareStatement(sql);
+            setAllPlaylists(playlists, token, st);
+            st.close();
+            conn.close();
+        } catch (SQLException e) {
+            getLogger().log(Level.SEVERE, "Error communicating with database " + getDatabaseProperties().connectionString(), e);
         }
+
         return playlists;
     }
 
-    private void setPlaylists(String token, ArrayList<PlaylistModel> playlists, PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = statement.executeQuery();
-        while(resultSet.next()) {
-            PlaylistModel playlist = new PlaylistModel();
-            playlist.setId(resultSet.getInt("ID"));
-            playlist.setName(resultSet.getString("NAME"));
-            playlist.setOwner(token.equals(resultSet.getString("TOKEN")));
-            playlist.setTracks(new ArrayList<>());
-            playlists.add(playlist);
-        }
+
+    //DELETE
+    public void dPlaylist(int id) {
+        String sql = "DELETE FROM PLAYLIST WHERE ID = " + id;
+        executeStatement(sql);
     }
 
-    private void tryLoadJdbcDriver(DatabaseProperties databaseProperties) {
-        try{
-            Class.forName(databaseProperties.driver());
-        } catch (ClassNotFoundException e) {
-            logger.log(Level.SEVERE, "Can't load JDBC Driver " + databaseProperties.driver(), e);
+    //CREATE
+    public void cPlaylist(String name, String token) {
+        String sql = "INSERT INTO PLAYLIST (NAME, TOKEN) VALUES ('" + name + "', '" + token + "')";
+        executeStatement(sql);
+    }
+
+    //UPDATE
+    public void uPlaylist(int id, String name) {
+        String sql = "UPDATE PLAYLIST SET NAME = '" + name + "' WHERE ID = " + id;
+        executeStatement(sql);
+    }
+
+    private void setAllPlaylists(ArrayList<PlaylistModel> playlists, String token, PreparedStatement st) throws SQLException {
+        ResultSet rS = st.executeQuery();
+        while(rS.next()) {
+            var playlist = new PlaylistModel();
+            playlist.setId(rS.getInt("ID"));
+            playlist.setName(rS.getString("NAME"));
+            playlist.setOwner(rS.getString("TOKEN").equals(token));
+            playlist.setTracks(new ArrayList<>());
+            playlists.add(playlist);
         }
     }
 }
