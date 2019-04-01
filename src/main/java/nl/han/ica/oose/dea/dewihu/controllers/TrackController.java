@@ -36,9 +36,6 @@ public class TrackController {
     public Response tracksOfPlaylist(@PathParam ("pId") int pId, @QueryParam("token") String token) {
         ArrayList<TrackModel> tracks = trackDAO.tracks(pId);
 
- /*       if (tracks.isEmpty()) {
-            return Response.status(400).build();
-        }*/
 
         TrackResponseDto response = new TrackResponseDto();
         response.setTracks(tracks);
@@ -56,7 +53,7 @@ public class TrackController {
     }
 
     @POST
-    @Path("playlists/{pId}/tracks")
+    @Path("playlists/{pId}")
     @Produces("application/json")
     @Consumes("application/json")
     public Response postTrack (@PathParam("pId") int pId, @QueryParam("token") String token, TrackRequestDto request) {

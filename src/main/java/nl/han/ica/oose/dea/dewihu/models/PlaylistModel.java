@@ -38,4 +38,14 @@ public class PlaylistModel {
     public void setTracks(ArrayList<TrackModel> tracks) {
         this.tracks = tracks;
     }
+
+    @Override
+    public String toString() {
+        return "PlaylistModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", owner=" + owner +
+                ", tracks=" + tracks +
+                '}';
+    }
 }

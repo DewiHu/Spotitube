@@ -5,7 +5,6 @@ import nl.han.ica.oose.dea.dewihu.controllers.dto.PlaylistResponseDto;
 import nl.han.ica.oose.dea.dewihu.datasources.PlaylistDAO;
 import nl.han.ica.oose.dea.dewihu.datasources.TrackDAO;
 import nl.han.ica.oose.dea.dewihu.models.PlaylistModel;
-import nl.han.ica.oose.dea.dewihu.services.PlaylistService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -15,66 +14,62 @@ import java.util.ArrayList;
 @Path("/")
 public class PlaylistController {
     private PlaylistDAO playlistDAO;
-    private PlaylistService playlistService;
     private TrackDAO trackDAO;
 
     @GET
     @Path("playlists")
     @Produces ("application/json")
-    public Response playlists(@QueryParam("token") String token) {
-        ArrayList<PlaylistModel> playlists = playlistDAO.rAllPlaylists(token);
+    public Response getPlaylists(@QueryParam("token") String token) {
+        ArrayList<PlaylistModel> playlists = playlistDAO.playlists(token);
 
         if (playlists.isEmpty()) {
-            return Response.status(400).build();
+            return Response.status(403).build();
         }
 
         for (PlaylistModel p : playlists) {
-            p.setTracks(trackDAO.availableTracks(p.getId()));
+            p.setTracks(trackDAO.tracks(p.getId()));
         }
 
         PlaylistResponseDto response = new PlaylistResponseDto();
         response.setPlaylists(playlists);
-        response.setLength(playlistService.length(playlists));
+        response.setLength(playlistDAO.length(playlists));
 
         return Response.ok().entity(response).build();
     }
-
 
     @DELETE
     @Path("playlists/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response delPlaylist (@QueryParam("token") String token, @PathParam("id") int id) {
-        playlistDAO.dPlaylist(id);
-        return playlists(token);
+    public Response delPlaylists (@PathParam("id") int id, @QueryParam("token") String token) {
+        playlistDAO.dPlaylist(id, token);
+
+        return Response.ok().entity(getPlaylists(token)).build();
     }
 
     @POST
     @Path("playlists")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response postPlaylist (@QueryParam("token") String token, PlaylistRequestDto request) {
+    public Response postPlaylists (@QueryParam("token") String token, PlaylistRequestDto request) {
         playlistDAO.cPlaylist(request.getName(), token);
-        return playlists(token);
+
+        return Response.ok().entity(getPlaylists(token)).build();
     }
 
     @PUT
     @Path("playlists/{id}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response putPlaylist (@QueryParam("token") String token, @PathParam("id") int id, PlaylistRequestDto request) {
-        playlistDAO.uPlaylist(id, request.getName());
-        return playlists(token);
+    public Response putPlaylists (@PathParam("id") int id, PlaylistRequestDto request, @QueryParam("token") String token) {
+        playlistDAO.uPlaylist(id, request.getName(), token);
+
+        return Response.ok().entity(getPlaylists(token)).build();
     }
 
     @Inject
     public void setPlaylistDAO(PlaylistDAO playlistDAO) {
         this.playlistDAO = playlistDAO;
-    }
-
-    @Inject
-    public void setPlaylistService(PlaylistService playlistService) {
-        this.playlistService = playlistService;
     }
 
     @Inject
