@@ -9,9 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class FakeTrackDAO extends DatabaseConnection implements TrackDAO{
+public class SpotitubeTrackDAO extends DatabaseConnection implements TrackDAO{
     @Inject
-    public FakeTrackDAO(DatabaseProperties databaseProperties) {
+    public SpotitubeTrackDAO(DatabaseProperties databaseProperties) {
         super(databaseProperties);
     }
 

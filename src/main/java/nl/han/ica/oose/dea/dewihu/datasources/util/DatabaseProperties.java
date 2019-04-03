@@ -35,11 +35,12 @@ public class DatabaseProperties {
         return properties.getProperty("password");
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
 
-
-
-
-
-
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
 
 }

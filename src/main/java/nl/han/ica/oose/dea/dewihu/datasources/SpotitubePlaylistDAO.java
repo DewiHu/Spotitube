@@ -10,10 +10,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class FakePlaylistDAO extends DatabaseConnection implements PlaylistDAO{
+public class SpotitubePlaylistDAO extends DatabaseConnection implements PlaylistDAO{
 
     @Inject
-    public FakePlaylistDAO(DatabaseProperties databaseProperties) {
+    public SpotitubePlaylistDAO(DatabaseProperties databaseProperties) {
         super(databaseProperties);
     }
 

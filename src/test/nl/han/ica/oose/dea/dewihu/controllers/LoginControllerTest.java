@@ -43,4 +43,22 @@ class LoginControllerTest {
         Mockito.verify(loginDAOMock).login(USERNAME, PASSWORD);
         Assertions.assertEquals(200, response.getStatus());
     }
+
+    @Test
+    void doesEndPointReturnCorrectStatusWithTokenValueOfNull() {
+        //Assemble
+        var dto = new LoginRequestDto();
+        dto.setUser(USERNAME);
+        dto.setPassword(PASSWORD);
+
+        var accountModel = new AccountModel();
+        Mockito.when(loginDAOMock.login(USERNAME, PASSWORD)).thenReturn(accountModel);
+
+        //Act
+        Response response = loginController.login(dto);
+
+        //Assert
+        Mockito.verify(loginDAOMock).login(USERNAME, PASSWORD);
+        Assertions.assertEquals(403, response.getStatus());
+    }
 }

@@ -8,10 +8,10 @@ import javax.inject.Inject;
 import java.sql.*;
 import java.util.logging.Level;
 
-public class FakeLoginDAO extends DatabaseConnection implements LoginDAO{
+public class SpotitubeLoginDAO extends DatabaseConnection implements LoginDAO{
 
     @Inject
-    public FakeLoginDAO(DatabaseProperties databaseProperties) {
+    public SpotitubeLoginDAO(DatabaseProperties databaseProperties) {
         super(databaseProperties);
     }
 

@@ -21,7 +21,7 @@ public class TrackController {
         ArrayList<TrackModel> tracks = trackDAO.availableTracks(forPlaylist);
 
         if (tracks.isEmpty()) {
-            return Response.status(400).build();
+            return Response.status(403).build();
         }
 
         TrackResponseDto response = new TrackResponseDto();
@@ -35,7 +35,6 @@ public class TrackController {
     @Produces("application/json")
     public Response tracksOfPlaylist(@PathParam ("pId") int pId, @QueryParam("token") String token) {
         ArrayList<TrackModel> tracks = trackDAO.tracks(pId);
-
 
         TrackResponseDto response = new TrackResponseDto();
         response.setTracks(tracks);
