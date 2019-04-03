@@ -2,7 +2,7 @@ package nl.han.ica.oose.dea.dewihu.controllers;
 
 import nl.han.ica.oose.dea.dewihu.controllers.dto.LoginRequestDto;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.LoginResponseDto;
-import nl.han.ica.oose.dea.dewihu.datasources.LoginDAO;
+import nl.han.ica.oose.dea.dewihu.dataaccess.LoginDAO;
 import nl.han.ica.oose.dea.dewihu.models.AccountModel;
 
 import javax.inject.Inject;

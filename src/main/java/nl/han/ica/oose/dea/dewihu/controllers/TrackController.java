@@ -2,7 +2,7 @@ package nl.han.ica.oose.dea.dewihu.controllers;
 
 import nl.han.ica.oose.dea.dewihu.controllers.dto.TrackRequestDto;
 import nl.han.ica.oose.dea.dewihu.controllers.dto.TrackResponseDto;
-import nl.han.ica.oose.dea.dewihu.datasources.TrackDAO;
+import nl.han.ica.oose.dea.dewihu.dataaccess.TrackDAO;
 import nl.han.ica.oose.dea.dewihu.models.TrackModel;
 
 import javax.inject.Inject;
@@ -52,7 +52,7 @@ public class TrackController {
     }
 
     @POST
-    @Path("playlists/{pId}")
+    @Path("playlists/{pId}/tracks")
     @Produces("application/json")
     @Consumes("application/json")
     public Response postTrack (@PathParam("pId") int pId, @QueryParam("token") String token, TrackRequestDto request) {

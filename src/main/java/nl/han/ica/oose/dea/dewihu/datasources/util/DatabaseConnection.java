@@ -1,6 +1,5 @@
 package nl.han.ica.oose.dea.dewihu.datasources.util;
 
-import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,7 +12,6 @@ public abstract class DatabaseConnection {
     private Logger logger = Logger.getLogger(getClass().getName());
     private DatabaseProperties databaseProperties;
 
-    @Inject
     public DatabaseConnection(DatabaseProperties databaseProperties) {
         this.databaseProperties = databaseProperties;
         tryLoadJdbcDriver(databaseProperties);

@@ -1,7 +1,7 @@
 package nl.han.ica.oose.dea.dewihu.controllers;
 
 import nl.han.ica.oose.dea.dewihu.controllers.dto.LoginRequestDto;
-import nl.han.ica.oose.dea.dewihu.datasources.LoginDAO;
+import nl.han.ica.oose.dea.dewihu.dataaccess.LoginDAO;
 import nl.han.ica.oose.dea.dewihu.models.AccountModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

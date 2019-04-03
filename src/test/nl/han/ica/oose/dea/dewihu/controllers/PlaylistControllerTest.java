@@ -1,8 +1,8 @@
 package nl.han.ica.oose.dea.dewihu.controllers;
 
 import nl.han.ica.oose.dea.dewihu.controllers.dto.PlaylistRequestDto;
-import nl.han.ica.oose.dea.dewihu.datasources.PlaylistDAO;
-import nl.han.ica.oose.dea.dewihu.datasources.TrackDAO;
+import nl.han.ica.oose.dea.dewihu.dataaccess.PlaylistDAO;
+import nl.han.ica.oose.dea.dewihu.dataaccess.TrackDAO;
 import nl.han.ica.oose.dea.dewihu.models.PlaylistModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

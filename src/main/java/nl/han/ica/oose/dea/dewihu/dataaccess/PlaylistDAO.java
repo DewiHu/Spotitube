@@ -1,4 +1,4 @@
-package nl.han.ica.oose.dea.dewihu.datasources;
+package nl.han.ica.oose.dea.dewihu.dataaccess;
 
 import nl.han.ica.oose.dea.dewihu.models.PlaylistModel;
 
