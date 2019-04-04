@@ -73,7 +73,7 @@ class TrackControllerTest {
 
         //Assert
         Mockito.verify(trackDAOMock).availableTracks(Mockito.isA(Integer.class));
-        Assertions.assertEquals(403, response.getStatus());
+        Assertions.assertEquals(400, response.getStatus());
     }
 
 }

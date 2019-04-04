@@ -21,7 +21,7 @@ public class TrackController {
         ArrayList<TrackModel> tracks = trackDAO.availableTracks(forPlaylist);
 
         if (tracks.isEmpty()) {
-            return Response.status(403).build();
+            return Response.status(400).build();
         }
 
         TrackResponseDto response = new TrackResponseDto();

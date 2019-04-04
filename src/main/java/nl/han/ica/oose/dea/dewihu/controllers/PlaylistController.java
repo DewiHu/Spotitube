@@ -23,7 +23,7 @@ public class PlaylistController {
         ArrayList<PlaylistModel> playlists = playlistDAO.playlists(token);
 
         if (playlists.isEmpty()) {
-            return Response.status(403).build();
+            return Response.status(400).build();
         }
 
         for (PlaylistModel p : playlists) {

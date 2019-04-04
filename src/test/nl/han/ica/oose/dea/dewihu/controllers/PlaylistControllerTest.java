@@ -70,6 +70,6 @@ class PlaylistControllerTest {
 
         //Assert
         Mockito.verify(playlistDAOMock).playlists(TOKEN);
-        Assertions.assertEquals(403, response.getStatus());
+        Assertions.assertEquals(400, response.getStatus());
     }
 }
